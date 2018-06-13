@@ -17,6 +17,8 @@ public class CommentPostControl {
 
         Date commentTime = new Date();
         comment.setCommentTime(commentTime);
+        comment.setId(UUID.randomUUID().toString());
+        // xxx-xxx-xxx-xxx会生成这个格式的数据
 
         comments.computeIfAbsent(songId, k -> new ArrayList<>()).add(comment);
 
