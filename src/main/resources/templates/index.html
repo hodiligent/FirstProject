@@ -6,6 +6,7 @@
     <script src="/jquery-3.3.1.min.js"></script>
 </head>
 <body>
+
 <img class="song-albumImg" th:src="${song.albumImg}"/>
 
     <h1 class="song-name" th:text="${song.name}"></h1>
@@ -33,6 +34,31 @@
             <a href="#" class="change-song" data-id="16435049">Someone Like You</a> <a href="#" class="player-btn" data-id="16435049">播放</a>
         </li>
     </ul>
+
+<h1>评论</h1>
+<form action="/comment/post" method="post">
+    <input type="hidden" name="nickName" value="bmatch">
+    <input type="hidden" name="songId" value="35847388">
+    <input name="content" type="text" style="width: 80%;height: 100px;"placeholder="填写你的评论">
+    <br/>
+    <button type="submit">评论</button>
+</form>
+<h3>精彩评论</h3>
+<ul th:each="comment:${comments}">
+    <li>
+        <img th:src="${comment.icon}"/>
+        <span th:text="${comment.nickName}"/>
+        :
+        <span th:text="${comment.content}"/>
+    </li>
+    <li>
+        <label>评论时间：</label>
+        <span th:text="${#dates.format(comment.commentTime,'yyyy-MM-dd HH:mm:ss')}"/>
+        <label>点赞数：</label>
+        <a href="#" th:data-id="${comment.id}" class="like-btn">
+            <span th:text="${comment.likeNum}"></span></a>
+    </li>
+</ul>
 <script>
 
     $(function () {
@@ -79,7 +105,24 @@
 
         })
 
-    });
+        $(".like-btn").on('click',function(e){
+            e.preventDefault(); //阻止浏览器默认行为
+            var self = $(this);
+            var commentId = self.data('id');
+            $.ajax({
+                url:"/comment/like",
+                method: "POST",
+                data: {
+                    songId:"35847388",
+                    commentId: commentId
+                },
+                cache: false
+            })
+                .done(function(data){
+                    self.html(data.likeNum);
+                });
+            });
+        });
 </script>
 </body>
 </html>
